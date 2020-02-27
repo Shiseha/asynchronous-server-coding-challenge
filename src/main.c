@@ -59,6 +59,7 @@ client_status_t   write_request(int socketfd)
   {
     return client_noevent;
   }
+  return client_write;
 }
 
 int       main()
