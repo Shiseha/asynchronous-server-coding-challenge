@@ -14,6 +14,15 @@ void  terminate(char *msg)
   exit(EXIT_FAILURE);
 }
 
+void  close_epfd(int epfd)
+{
+  if (close(epfd) == -1)
+  {
+    fprintf(stderr, "Failed to close epoll fd\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
 void  non_blocking_socket(int socketfd)
 {
   int  status = fcntl(socketfd, F_SETFL,
@@ -53,4 +62,21 @@ int   initiate_socket()
   non_blocking_socket(socketfd);
 
   return socketfd;
+}
+
+int   accept_connection(int server_fd)
+{
+  int                 client_fd;
+  struct sockaddr_in  client_addr;
+  socklen_t           client_addr_len = sizeof(client_addr);
+
+  client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_addr_len);
+  if (client_fd == -1)
+  {
+    terminate("Couldn't connect client");
+  }
+
+  non_blocking_socket(client_fd);
+
+  return client_fd;
 }
