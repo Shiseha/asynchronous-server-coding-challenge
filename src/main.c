@@ -33,10 +33,9 @@ client_status_t   read_request(int socketfd)
   if (msg_size < 0)
   {
     if (errno = EAGAIN || errno == EWOULDBLOCK)
-    {
       return client_read;
-    }
-    else terminate("read failed");
+    else
+      terminate("read failed");
   }
   client_context->nb_write_left = atoi(buff);
   if (client_context->nb_write_left == 0)
@@ -52,7 +51,15 @@ client_status_t   write_request(int socketfd)
 
   if (client_context->nb_write_left > 0)
   {
-    write(socketfd, poem, strlen(poem));
+    int msg_sent = write(socketfd, poem, strlen(poem));
+
+    if (msg_sent == -1)
+    {
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
+        return client_write;
+      else
+        terminate("write_failed");
+    }
     client_context->nb_write_left--;
   }
   else if (client_context->nb_write_left == 0)
