@@ -78,5 +78,7 @@ int   accept_connection(int server_fd)
 
   non_blocking_socket(client_fd);
 
+  printf("client %d connected\n", client_fd);
+
   return client_fd;
 }
