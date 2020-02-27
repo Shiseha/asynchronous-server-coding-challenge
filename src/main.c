@@ -4,9 +4,6 @@
 #include <sys/epoll.h>
 #include "utils.h"
 
-#define PORT 2826
-#define MAX_CONNECTIONS 256
-
 void		  close_epfd(int epfd)
 {
 	if (close(epfd) == -1)
@@ -25,13 +22,16 @@ void      exit_error(char* err_msg)
 
 int       main()
 {
-  int     port = PORT_NUMBER;
+  int     port = PORT;
   int     event_count;
   size_t  bytes_read;
   printf("Serving on %d\n", port);
 
   struct  epoll_event event, events[MAX_CONNECTIONS];
   int     epfd = epoll_create1(0);
+  char    read_buffer[READ_SIZE + 1];
+
+  int     server_fd = initiate_socket();
 
   if (epfd == -1)
   {
